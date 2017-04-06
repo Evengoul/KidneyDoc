@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('kidney',['ionic','kidney.services','kidney.controllers','ngCordova','kidney.directives'])
+angular.module('kidney',['ionic','kidney.services','kidney.controllers','ngCordova','kidney.directives','monospaced.qrcode'])
 
 .run(['$ionicPlatform', '$state', 'Storage','JM', function($ionicPlatform, $state, Storage,JM) {
 	$ionicPlatform.ready(function() {
@@ -216,11 +216,92 @@ angular.module('kidney',['ionic','kidney.services','kidney.controllers','ngCordo
  //    })
 		
 	//交流页面
-	.state('tab.communication', {
+	// .state('tab.groups', {
+ //        url: '/groups',
+ //        views: {
+ //            'tab-groups': {
+ //                templateUrl: 'partials/group/groups.html',
+ //                controller: 'GroupsCtrl'
+ //            }
+ //        }
+ //    })
+    .state('tab.new-group', {
+        url: '/newgroup',
+        views: {
+            'tab-groups': {
+                templateUrl: 'partials/group/new-group.html',
+                controller: 'NewGroupCtrl'
+            }
+        }
+    })
+    .state('tab.groups-search', {
+        url: '/groups/search',
+        views: {
+            'tab-groups': {
+                templateUrl: 'partials/group/groups-search.html',
+                controller: 'GroupsSearchCtrl'
+            }
+        }
+    })
+    .state('tab.group-add', {
+            url: '/groups/add/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-add.html',
+                    controller: 'GroupAddCtrl'
+                }
+            }
+        })
+    .state('tab.group-add-member', {
+            url: '/groups/addmember/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-add-member.html',
+                    controller: 'GroupAddMemberCtrl'
+                }
+            }
+        })
+    .state('tab.group-detail', {
+            url: '/groups/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-detail.html',
+                    controller: 'GroupDetailCtrl'
+                }
+            }
+        })
+    .state('tab.group-qrcode', {
+            url: '/groups/qrcode/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-qrcode.html',
+                    controller: 'GroupQrcodeCtrl'
+                }
+            }
+        })
+    .state('tab.group-chat', {
+            url: '/groups/chat/:type/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-chat.html',
+                    controller: 'GroupChatCtrl'
+                }
+            }
+        })
+    .state('tab.group-discuss',{
+    	url:'/groups/discuss/:groupId',
+    	views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-discuss.html',
+                    controller: 'GroupDiscussCtrl'
+                }
+            }
+    })
+	.state('tab.groups', {
 		// cache: false,
-		url: '/communication',
+		url: '/groups',
 		views: {
-			'tab-communication':{
+			'tab-groups':{
 				controller: 'mygrouplistCtrl',
 				templateUrl: 'partials/group/mygrouplist.html'
 			}
@@ -231,22 +312,22 @@ angular.module('kidney',['ionic','kidney.services','kidney.controllers','ngCordo
 		// cache: false,
 		url: '/grouppatient',
 		views: {
-			'tab-communication':{
+			'tab-groups':{
 				controller: 'grouppatientCtrl',
 				templateUrl: 'partials/group/grouppatient.html'
 			}
 		}
 	})
-	.state('tab.groupQRCode', {
-		// cache: false,
-		url: '/groupQRCode',
-		views: {
-			'tab-communication':{
-				controller: 'groupQRCodeCtrl',
-				templateUrl: 'partials/group/groupQRCode.html'
-			}
-		}
-	})
+	// .state('tab.groupQRCode', {
+	// 	// cache: false,
+	// 	url: '/groupQRCode',
+	// 	views: {
+	// 		'tab-communication':{
+	// 			controller: 'groupQRCodeCtrl',
+	// 			templateUrl: 'partials/group/group-qrcode.html'
+	// 		}
+	// 	}
+	// })
 		
 	//"我"页面
 	.state('tab.me', {

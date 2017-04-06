@@ -1,12 +1,7 @@
 <ion-view title="我的团队">
-  <ion-nav-bar class="bar-dark nav-title-slide-ios7" style="" >
-    <ion-nav-back-button class="button-icon ion-arrow-left-c">
-    </ion-nav-back-button>
-  </ion-nav-bar>
-  <ion-header-bar class="bar-dark nav-title-slide-ios7">
-    <button class="button button-icon icon ion-qr-scanner " ng-click="QRscan()"></button>
-    <button class="button button-icon icon ion-plus-round" ng-click="addgroup()" style="float:right"></button>
-  </ion-header-bar>
+  <ion-nav-buttons side="right">
+      <a class="button button-icon icon ion-android-add" ng-click="popover.show($event)"></a>
+    </ion-nav-buttons>
   <div class="bar bar-subheader item-input-inset bar-light">
     <div class="item-input-wrapper">
       <i style="color:#3d6399;font-size:1.6em" class="icon ion-android-search placeholder-icon"></i>
