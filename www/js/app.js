@@ -3,9 +3,9 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('kidney',['ionic','kidney.services','kidney.controllers'])
+angular.module('kidney',['ionic','kidney.services','kidney.controllers','ngCordova','kidney.directives','monospaced.qrcode'])
 
-.run(function($ionicPlatform, $state, Storage, $location, $ionicHistory, $ionicPopup) {
+.run(['$ionicPlatform', '$state', 'Storage','JM', function($ionicPlatform, $state, Storage,JM) {
 	$ionicPlatform.ready(function() {
 
 	    //是否登陆
@@ -30,8 +30,57 @@ angular.module('kidney',['ionic','kidney.services','kidney.controllers'])
 	    if(window.StatusBar) {
 	    	StatusBar.styleDefault();
 	    }
+	    if (window.JPush) {
+            window.JPush.init();
+        }
+        if(window.JMessage){
+          // window.Jmessage.init();
+          JM.init();
+          $rootScope.conversation = {
+            type:null,
+            id:''
+          }
+          document.addEventListener('jmessage.onOpenMessage', function(msg) {
+            console.info('[jmessage.onOpenMessage]:');
+            console.log(msg);
+            $state.go('tab.chat-detail',{chatId:msg.fromName,fromUser:msg.fromUser});
+          }, false);
+          document.addEventListener('jmessage.onReceiveMessage', function(msg) {
+            console.info('[jmessage.onReceiveMessage]:');
+            console.log(msg);
+            $rootScope.$broadcast('receiveMessage',msg);
+            if (device.platform == "Android") {
+                // message = window.JMessage.message;
+                // console.log(JSON.stringify(message));
+            }
+          }, false);
+          document.addEventListener('jmessage.onReceiveCustomMessage', function(msg) {
+            console.log('[jmessage.onReceiveCustomMessage]: '+msg);
+            // $rootScope.$broadcast('receiveMessage',msg);
+            if(msg.targetType=='single' && msg.fromID!=$rootScope.conversation.id){
+              if (device.platform == "Android") {
+                window.plugins.jPushPlugin.addLocalNotification(1, '本地推送内容test', msg.content.contentStringMap.type, 111, 0, null)
+                  // message = window.JMessage.message;
+                  // console.log(JSON.stringify(message));
+              }else{
+                window.plugins.jPushPlugin.addLocalNotificationForIOS(0, msg.content.contentStringMap.type+'本地推送内容test', 1, 111, null)
+              }
+            }
+            
+          }, false);
+
+        }
+        if(window.cordova && window.cordova.file){
+          console.log(window.cordova.file);
+        }
+        window.addEventListener('native.keyboardshow', function(e){
+          $rootScope.$broadcast('keyboardshow',e.keyboardHeight);
+        });
+        window.addEventListener('native.keyboardhide', function(e){
+          $rootScope.$broadcast('keyboardhide');
+        });
 	});
-})
+}])
 
 // --------路由, url模式设置----------------
 .config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
@@ -167,11 +216,92 @@ angular.module('kidney',['ionic','kidney.services','kidney.controllers'])
  //    })
 		
 	//交流页面
-	.state('tab.communication', {
+	// .state('tab.groups', {
+ //        url: '/groups',
+ //        views: {
+ //            'tab-groups': {
+ //                templateUrl: 'partials/group/groups.html',
+ //                controller: 'GroupsCtrl'
+ //            }
+ //        }
+ //    })
+    .state('tab.new-group', {
+        url: '/newgroup',
+        views: {
+            'tab-groups': {
+                templateUrl: 'partials/group/new-group.html',
+                controller: 'NewGroupCtrl'
+            }
+        }
+    })
+    .state('tab.groups-search', {
+        url: '/groups/search',
+        views: {
+            'tab-groups': {
+                templateUrl: 'partials/group/groups-search.html',
+                controller: 'GroupsSearchCtrl'
+            }
+        }
+    })
+    .state('tab.group-add', {
+            url: '/groups/add/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-add.html',
+                    controller: 'GroupAddCtrl'
+                }
+            }
+        })
+    .state('tab.group-add-member', {
+            url: '/groups/addmember/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-add-member.html',
+                    controller: 'GroupAddMemberCtrl'
+                }
+            }
+        })
+    .state('tab.group-detail', {
+            url: '/groups/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-detail.html',
+                    controller: 'GroupDetailCtrl'
+                }
+            }
+        })
+    .state('tab.group-qrcode', {
+            url: '/groups/qrcode/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-qrcode.html',
+                    controller: 'GroupQrcodeCtrl'
+                }
+            }
+        })
+    .state('tab.group-chat', {
+            url: '/groups/chat/:type/:groupId',
+            views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-chat.html',
+                    controller: 'GroupChatCtrl'
+                }
+            }
+        })
+    .state('tab.group-discuss',{
+    	url:'/groups/discuss/:groupId',
+    	views: {
+                'tab-groups': {
+                    templateUrl: 'partials/group/group-discuss.html',
+                    controller: 'GroupDiscussCtrl'
+                }
+            }
+    })
+	.state('tab.groups', {
 		// cache: false,
-		url: '/communication',
+		url: '/groups',
 		views: {
-			'tab-communication':{
+			'tab-groups':{
 				controller: 'mygrouplistCtrl',
 				templateUrl: 'partials/group/mygrouplist.html'
 			}
@@ -182,22 +312,22 @@ angular.module('kidney',['ionic','kidney.services','kidney.controllers'])
 		// cache: false,
 		url: '/grouppatient',
 		views: {
-			'tab-communication':{
+			'tab-groups':{
 				controller: 'grouppatientCtrl',
 				templateUrl: 'partials/group/grouppatient.html'
 			}
 		}
 	})
-	.state('tab.groupQRCode', {
-		// cache: false,
-		url: '/groupQRCode',
-		views: {
-			'tab-communication':{
-				controller: 'groupQRCodeCtrl',
-				templateUrl: 'partials/group/groupQRCode.html'
-			}
-		}
-	})
+	// .state('tab.groupQRCode', {
+	// 	// cache: false,
+	// 	url: '/groupQRCode',
+	// 	views: {
+	// 		'tab-communication':{
+	// 			controller: 'groupQRCodeCtrl',
+	// 			templateUrl: 'partials/group/group-qrcode.html'
+	// 		}
+	// 	}
+	// })
 		
 	//"我"页面
 	.state('tab.me', {

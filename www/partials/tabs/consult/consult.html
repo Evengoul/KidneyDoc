@@ -1,13 +1,23 @@
-<ion-header-bar align-title="center" class="bar-stable">
+<!-- <ion-header-bar align-title="center" class="bar-stable">
      <a class="subdued" style="position: absolute;left: 4px;bottom: 5px;color: #435356;border: 0;" href="#/tab/location" >
             <span style="border: 0;font-size: 26px;margin-left:5px;"><i class="icon ion-qr-scanner"></i></span>
      </a>
 	 <input ng-model="tag" style="left:12%;bottom:5px;position:absolute;padding-left:23px" auto-focus-when="focus" placeholder="搜索联系人" ng-model="searchInput">
 	 <i class="icon ion-ios-search tab-search-cur" style="left:15%;bottom:5px;position:absolute;"></i>
 	 <a class="icon ion-android-mail" href="#/tab/search" style="color: #435356;font-size: 28px;position: absolute;right: 10px;bottom: 5px;"></a>
-</ion-header-bar>
+</ion-header-bar> -->
 
 <ion-view>
+<ion-nav-bar class="bar-positive">
+    <ion-nav-buttons side="left">
+      <a class="button button-icon icon ion-qr-scanner" ng-click=""></a>
+    
+    <input ng-model="tag" style="left:12%;bottom:5px;position:absolute;padding-left:23px" auto-focus-when="focus" placeholder="搜索联系人" ng-model="searchInput">
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+      <a class="button button-icon icon ion-android-mail" ng-click="popover.show($event)"></a>
+    </ion-nav-buttons>
+    </ion-nav-bar>
     <ion-content has-bouncing="true" overflow-scroll="false">  
        <div class="blank-h12"></div>
 	    <div>进行中</div>
