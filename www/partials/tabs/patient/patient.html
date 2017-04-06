@@ -1,0 +1,22 @@
+<ion-header-bar align-title="center" class="bar-stable">
+    <div class="buttons">
+        <button class="button button-icon ion-ios-arrow-left" ng-click="$ionicGoBack()">
+        </button>
+    </div>
+    <div class="h1 title login-title" >患者列表</div>
+</ion-header-bar>
+<ion-view>
+    <ion-content>
+        <div class="list">
+            <a class="item item-thumbnail-left" href="#/tab/patientDetail" ng-repeat="p in patients">
+                <img src="img/head/{{p.head}}">
+				<div>
+                <span>{{p.name}}</span><span>{{p.sex}}</span><span>{{p.age}}岁</span>
+				<span class="mine-msg-right">{{p.symptom}}</span>
+                <p class="friend-detail-p">预约时间{{p.appoint}}</p>
+				</div>
+            </a>      
+        </div>
+    </ion-content>
+</ion-view>
+

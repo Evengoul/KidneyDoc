@@ -1,0 +1,37 @@
+<ion-header-bar align-title="center" class="bar-stable">
+     <a class="subdued" style="position: absolute;left: 4px;bottom: 5px;color: #435356;border: 0;" href="#/tab/location" >
+            <span style="border: 0;font-size: 26px;margin-left:5px;"><i class="icon ion-qr-scanner"></i></span>
+     </a>
+	 <input ng-model="tag" style="left:12%;bottom:5px;position:absolute;padding-left:23px" auto-focus-when="focus" placeholder="搜索联系人" ng-model="searchInput">
+	 <i class="icon ion-ios-search tab-search-cur" style="left:15%;bottom:5px;position:absolute;"></i>
+	 <a class="icon ion-android-mail" href="#/tab/search" style="color: #435356;font-size: 28px;position: absolute;right: 10px;bottom: 5px;"></a>
+</ion-header-bar>
+
+<ion-view>
+    <ion-content has-bouncing="true" overflow-scroll="false">  
+       <div class="blank-h12"></div>
+	    <div>进行中</div>
+        <div class="card">
+            <a href="#/tab/doing" class="subdued">
+                <div class="item item-text-wrap"">
+				    <i class="icon ion-calendar"></i>
+					{{riqi}}&nbsp;&nbsp;&nbsp;
+                    {{doctor.a}}位  等待患者
+					<i class="icon ion-chevron-right mine-msg-right"></i>
+                </div>
+            </a>
+        </div>
+		<div>已完成</div>
+        <div class="card">
+            <a href="#/tab/did" class="subdued">
+                <div class="item item-text-wrap">
+				    <i class="icon ion-android-clipboard"></i>v;
+                    {{riqi}}&nbsp;&nbsp;&nbsp;
+                    {{doctor.b}}位  已完成咨询
+					<i class="icon ion-chevron-right mine-msg-right"></i>
+                </div>
+            </a>
+        </div>
+    </ion-content>
+</ion-view>
+<!-- 页面下方按钮-tab -->

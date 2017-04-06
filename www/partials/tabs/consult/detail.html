@@ -1,0 +1,39 @@
+<ion-header-bar align-title="center" class="bar-stable">
+    <div class="buttons">
+        <button class="button button-icon ion-ios-arrow-left" ng-click="$ionicGoBack()">
+        </button>
+    </div>
+    <div class="h1 title login-title" >咨询详情</div>
+</ion-header-bar>
+<ion-view>
+    <ion-content>
+
+      <ion-list>
+          
+            <ion-item class="item item-thumbnail-left item-icon-right">
+                 <img src="img/head/{{detail.head}}">
+				<div>
+                <span>{{detail.name}}</span><span>{{detail.sex}}</span><span>{{detail.age}}岁</span>
+				<span class="mine-msg-right">{{detail.time}}</span>
+                <p class="friend-detail-p">{{detail.qs}}</p>
+				</div>
+            </ion-item>
+            <ion-item>
+                 <h2>{{detail.symptom}} &nbsp;{{detail.type}}
+				 <span class="mine-msg-right">浙江杭州</span>
+				 <p>{{detail.desc}}</p>
+            </ion-item>
+		    <ion-item>
+                 <h2>医生答复</h2>
+				 <input type="text">
+            </ion-item>
+        </ion-list>
+		
+    </ion-content>
+</ion-view>
+
+<style type="text/css">
+    p{
+        white-space:nowrap;
+    }
+</style>
