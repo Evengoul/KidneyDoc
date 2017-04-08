@@ -159,6 +159,16 @@ angular.module('kidney',['ionic','kidney.services','kidney.controllers'])
 			}
 		}
 	})
+	.state('tab.tasklist', {
+		cache: false, //禁用缓存不起作用
+		url: '/tasklist',
+		views: {
+			'tab-patient':{
+				controller: 'TaskListCtrl',
+				templateUrl: 'partials/patient/tasklist.html'
+			}
+		}
+	})
 
 	// .state('DoctorDiagnose', {
  //      url: '/DoctorDiagnose',

@@ -459,7 +459,7 @@ angular.module('kidney.controllers', ['ionic','kidney.services'])//,'ngRoute'
 }])
 
 /////////////////////////tongdanyang/////////////////
-.controller('DoctorDiagnoseCtrl', ['$scope', 'Storage', function ($scope, Storage) {
+.controller('DoctorDiagnoseCtrl', ['$scope', 'Storage', '$state', function ($scope, Storage, $state) {
   $scope.Hypers =
   [
     {Name:"是",Type:1},
@@ -629,6 +629,161 @@ angular.module('kidney.controllers', ['ionic','kidney.services'])//,'ngRoute'
       "DetailDiagnose": null
     }
   }
+
+  //跳转至任务列表
+  $scope.GotoTask = function()
+  {
+    $state.go('tab.tasklist');
+  }
+}])
+
+//任务列表
+.controller('TaskListCtrl', ['$scope','$timeout','$state','Storage','$ionicHistory', '$ionicPopup', function($scope, $timeout,$state,Storage,$ionicHistory,$ionicPopup) {
+  $scope.barwidth="width:0%";
+  
+  $scope.measureTask = [{"Name":"体温",
+                         "Frequency":"1次/1天", 
+                         "Discription":"每日在早饭前，大小便之后测量并记录一次。每次在同一时间、穿同样的衣服测量",
+                         "Unit":"摄氏度",
+                         "Flag":false},
+                        {"Name":"体重",
+                        "Frequency":"1次/1天", 
+                        "Discription":"每日在早饭前，大小便之后测量并记录一次。每次在同一时间、穿同样的衣服测量",
+                        "Unit":"kg",
+                        "Flag":false}];
+  //console.log($scope.category);
+  //分为已完成和未完成任务（标志位）；今日任务，全部任务（由时间区分）
+  $scope.fillTask = [{"Name":"血管通路情况",
+                        "Frequency":"1周/1次", 
+                        "Discription":"",
+                        "Unit":"",
+                        "Flag":false}]
+  //自定义弹窗
+  $scope.measureResult = [{"Name":"","Value":""}];
+  $scope.showPopup = function(name) {
+           $scope.data = {}
+    var myPopup = $ionicPopup.show({
+       template: '<input type="text" ng-model="data.value">',
+       title: '请填写'+ name,
+       scope: $scope,
+       buttons: [
+         { text: '取消' },
+         {
+           text: '<b>保存</b>',
+           type: 'button-positive',
+           onTap: function(e) {
+             if (!$scope.data.value) {
+               // 不允许用户关闭，除非输入内容
+               e.preventDefault();
+             } else {
+              return $scope.data.value;
+             }  
+             }    
+         },
+       ]
+     });
+     myPopup.then(function(res) {
+      if(res)
+      {
+        //填写测量任务后标志位更新
+        $scope.measureResult.Name = name;
+        $scope.measureResult.Value = res;
+        console.log(res.value);
+        for (i = 0; i<$scope.measureTask.length; i++)
+        {
+          if ($scope.measureTask[i].Name == name)
+          {
+              $scope.measureTask[i].Flag = true;      
+              $scope.measureTask[i].Value = res;  
+          }          
+        }
+        console.log($scope.measureTask); 
+      }  
+    });
+  };
+
+  //任务完成后设定下次任务执行时间,CurrentTime为整数
+  function SetNextTime(CurrentTime, Freq)
+  {
+      var NextTime = 0;
+      //假定频率格式为2周/1次
+      var FreqUnit = Freq.substr(1,1);
+      var FreqNum = Freq.substr(0,1);
+      if (FreqUnit == "周")
+      {
+          NextTime = DateCalc("week", CurrentTime, parseInt(FreqNum)*7);
+      }
+      else if(FreqUnit == "月")
+      {
+          NextTime = DateCalc("month", CurrentTime, parseInt(FreqNum));
+      }
+      console.log(NextTime);
+      return NextTime;
+  }
+
+  //日期延后计算
+  function DateCalc(Type, CurrentTime, Addition)
+  {
+    var CuTimeStr = CurrentTime.toString();
+    var CurrentTime = CuTimeStr.substr(0,4) + "-" + CuTimeStr.substr(4,2) + "-" + CuTimeStr.substr(6,2);
+    var Date1 = new Date(CurrentTime);
+    var Date2;
+    if(Type == "week") //周
+    {
+        Date2 = new Date(Date1.setDate(Date1.getDate() + Addition));
+    }
+    else //月
+    {
+        Date2 = new Date(Date1.setMonth(Date1.getMonth() + Addition));
+    }
+    var Ret = DateToInt(Date2);
+    return Ret;
+  }
+
+ //测试函数
+ $scope.Test=function()
+ {
+  $scope.TestTime = SetNextTime(20170331, "2月/次");
+ }
+
+ //日期转换为整数
+ function DateToInt(Date1)
+ {
+    var Year = Date1.getFullYear().toString();
+    var Month = (Date1.getMonth() + 1).toString();
+    var Day = Date1.getDate().toString();
+    if (Date1.getMonth() < 10)
+    {
+        Month = "0" + Month;
+    }
+    if(Date1.getDate() < 9)
+    {
+       Day = "0" + Day;
+    }
+    return parseInt(Year + Month + Day);
+ }
+
+  //填写记录时页面跳转
+   $scope.ToDetailPage=function(name)
+   {
+     $state.go('task.r',{t:name + 'userId|taskId'});
+   }
+  $scope.Units = ["天", "周", "年", "月"];
+  $scope.Times = ["1", "2", "3", "4", "5"];
+  $scope.Tasks = [{Name: "体温", Freq: {Time1:"1", Unit:"天", Time2:"1"}, Time:$scope.Times, Unit:$scope.Units}, 
+                  {Name: "体重", Freq: {Time1:"1", Unit:"天", Time2:"1"}, Time:$scope.Times, Unit:$scope.Units},  
+                  {Name: "血压", Freq: {Time1:"1", Unit:"天", Time2:"2"}, Time:$scope.Times, Unit:$scope.Units}, 
+                  {Name: "心率", Freq: {Time1:"1", Unit:"天", Time2:"2"}, Time:$scope.Times, Unit:$scope.Units}, 
+                  {Name: "血管通路情况", Freq:{Time1:"1", Unit:"天", Time2:"1"}, Time:$scope.Times, Unit:$scope.Units}, 
+                  {Name: "复诊", Freq: {Time1:"1", Unit:"月", Time2:"1"}, Time:$scope.Times, Unit:$scope.Units}, 
+                  {Name: "化验", Freq: {Time1:"2", Unit:"天", Time2:"1"}, Time:$scope.Times, Unit:$scope.Units}, 
+                  {Name: "特殊评估", Freq: {Time1:"1", Unit:"年", Time2:"1"}, Time:$scope.Times, Unit:$scope.Units}];
+
+  $scope.SetFreq = function()
+  {
+      $state.go('tab.patientDetail');
+  }
+  
 }])
 
 
